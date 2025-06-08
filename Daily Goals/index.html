@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>To-Do List</title>
+  <style>
+    body {
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      background: #f4f7f8;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      margin: 0;
+    }
+
+    .container {
+      background: #fff;
+      padding: 30px;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+      width: 100%;
+      max-width: 400px;
+    }
+
+    h2 {
+      text-align: center;
+      color: #333;
+      margin-bottom: 20px;
+    }
+
+    input[type="text"] {
+      width: 65%;
+      padding: 10px;
+      margin-right: 10px;
+      border: 1px solid #ccc;
+      border-radius: 6px;
+      font-size: 16px;
+    }
+
+    button {
+      padding: 10px 16px;
+      border: none;
+      border-radius: 6px;
+      background-color: #4CAF50;
+      color: white;
+      font-size: 16px;
+      cursor: pointer;
+      transition: background 0.3s ease;
+    }
+
+    button:hover {
+      background-color: #45a049;
+    }
+
+    ul {
+      list-style-type: none;
+      padding: 0;
+      margin-top: 20px;
+    }
+
+    li {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      background: #f9f9f9;
+      margin-bottom: 10px;
+      padding: 10px 14px;
+      border-radius: 6px;
+      transition: background 0.3s ease;
+    }
+
+    li:hover {
+      background: #eee;
+    }
+
+    li input[type="checkbox"] {
+      margin-right: 10px;
+      transform: scale(1.2);
+    }
+
+    li.done {
+      text-decoration: line-through;
+      color: #888;
+    }
+
+    li button {
+      background: none;
+      color: red;
+      font-size: 18px;
+      cursor: pointer;
+      border: none;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <h2>To-Do List</h2>
+    <input type="text" id="taskInput" placeholder="Add a new task..." />
+    <button onclick="addTask()">Add</button>
+    <ul id="taskList"></ul>
+  </div>
+
+  <script>
+    let tasks = JSON.parse(localStorage.getItem("tasks")) || [];
+
+    function saveTasks() {
+      localStorage.setItem("tasks", JSON.stringify(tasks));
+    }
+
+ function renderTasks() {
+  const list = document.getElementById("taskList");
+  list.innerHTML = "";
+  tasks.forEach((task, index) => {
+    const li = document.createElement("li");
+    li.className = task.completed ? "done" : "";
+    li.innerHTML = `
+      <span>
+        <input type="checkbox" ${task.completed ? "checked" : ""} onclick="toggleTask(${index})" />
+        <strong>${index + 1}.</strong> ${task.text}
+      </span>
+      <button onclick="deleteTask(${index})">❌</button>
+    `;
+    list.appendChild(li);
+  });
+}
+
+    function addTask() {
+      const input = document.getElementById("taskInput");
+      const text = input.value.trim();
+      if (text !== "") {
+        tasks.push({ text, completed: false });
+        input.value = "";
+        saveTasks();
+        renderTasks();
+      }
+    }
+
+    function toggleTask(index) {
+      tasks[index].completed = !tasks[index].completed;
+      saveTasks();
+      renderTasks();
+    }
+
+    function deleteTask(index) {
+      tasks.splice(index, 1);
+      saveTasks();
+      renderTasks();
+    }
+
+    renderTasks();
+  </script>
+</body>
+</html>
+
